@@ -87,9 +87,9 @@ Or install directly from [Open VSX Registry](https://open-vsx.org/extension/luca
 ### From VSIX File
 Download the `.vsix` file from [Releases](https://github.com/lucasbiel7/yaml-key-replace/releases) and install via:
 ```bash
-code --install-extension yaml-key-replace-0.0.3.vsix
+code --install-extension yaml-key-replace-0.0.4.vsix
 # or
-cursor --install-extension yaml-key-replace-0.0.3.vsix
+cursor --install-extension yaml-key-replace-0.0.4.vsix
 ```
 
 ### From Source (Development)
@@ -113,9 +113,9 @@ npm run compile
 npm run package
 
 # Install in Cursor/VS Code
-cursor --install-extension yaml-key-replace-0.0.3.vsix
+cursor --install-extension yaml-key-replace-0.0.4.vsix
 # or
-code --install-extension yaml-key-replace-0.0.3.vsix
+code --install-extension yaml-key-replace-0.0.4.vsix
 ```
 
 ## How It Works

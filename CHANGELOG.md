@@ -6,6 +6,13 @@ All notable changes to the YAML Key Replace extension will be documented in this
 
 ---
 
+## [0.0.4] - 2026-02-02
+
+### Fixed
+- Fix packaged extension missing production dependency (`yaml`), which prevented activation and caused contributed commands to be "not found".
+
+---
+
 ## [0.0.3] - 2026-02-02
 
 ### Fixed
@@ -38,6 +45,7 @@ All notable changes to the YAML Key Replace extension will be documented in this
 
 ---
 
-[Unreleased]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.2...v0.0.3
 [0.0.1]: https://github.com/lucasbiel7/yaml-key-replace/releases/tag/v0.0.1
