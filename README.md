@@ -87,9 +87,9 @@ Or install directly from [Open VSX Registry](https://open-vsx.org/extension/luca
 ### From VSIX File
 Download the `.vsix` file from [Releases](https://github.com/lucasbiel7/yaml-key-replace/releases) and install via:
 ```bash
-code --install-extension yaml-key-replace-0.0.1.vsix
+code --install-extension yaml-key-replace-0.0.3.vsix
 # or
-cursor --install-extension yaml-key-replace-0.0.1.vsix
+cursor --install-extension yaml-key-replace-0.0.3.vsix
 ```
 
 ### From Source (Development)
@@ -113,9 +113,9 @@ npm run compile
 npm run package
 
 # Install in Cursor/VS Code
-cursor --install-extension yaml-key-replace-0.0.1.vsix
+cursor --install-extension yaml-key-replace-0.0.3.vsix
 # or
-code --install-extension yaml-key-replace-0.0.1.vsix
+code --install-extension yaml-key-replace-0.0.3.vsix
 ```
 
 ## How It Works
@@ -184,6 +184,7 @@ View logs in the **Debug Console** when running the Extension Development Host.
 
 The extension automatically:
 - Activates when you open YAML files
+- Activates when a contributed command is executed (e.g., via keybindings)
 - Uses your editor's indentation settings
 - Works only in YAML language mode
 
