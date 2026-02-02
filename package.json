@@ -1,0 +1,114 @@
+{
+  "name": "yaml-key-replace",
+  "displayName": "YAML Key Replace",
+  "description": "Smart paste/copy for YAML properties - expand dotted keys to YAML structure",
+  "version": "0.0.1",
+  "publisher": "lucasbiel7",
+  "author": {
+    "name": "lucasbiel7"
+  },
+  "engines": {
+    "vscode": "^1.93.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucasbiel7/yaml-key-replace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lucasbiel7/yaml-key-replace/issues"
+  },
+  "homepage": "https://github.com/lucasbiel7/yaml-key-replace#readme",
+  "license": "MIT",
+  "categories": [
+    "Formatters",
+    "Other"
+  ],
+  "keywords": [
+    "yaml",
+    "yml",
+    "paste",
+    "copy",
+    "properties",
+    "expand"
+  ],
+  "icon": "images/icone.png",
+  "activationEvents": [
+    "onLanguage:yaml",
+    "workspaceContains:**/*.yml",
+    "workspaceContains:**/*.yaml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "yamlKeyReplace.pasteKeyPath",
+        "title": "YAML: Paste Key Path"
+      },
+      {
+        "command": "yamlKeyReplace.copyKeyPath",
+        "title": "YAML: Copy Key Path"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "yamlKeyReplace.pasteKeyPath",
+        "key": "ctrl+v",
+        "mac": "cmd+v",
+        "when": "editorTextFocus && editorLangId == yaml"
+      },
+      {
+        "command": "yamlKeyReplace.copyKeyPath",
+        "key": "ctrl+c",
+        "mac": "cmd+c",
+        "when": "editorTextFocus && editorLangId == yaml"
+      }
+    ],
+    "configuration": {
+      "title": "YAML Key Replace",
+      "properties": {
+        "yamlKeyReplace.logLevel": {
+          "type": "string",
+          "default": "info",
+          "enum": [
+            "error",
+            "warn",
+            "info",
+            "debug",
+            "trace"
+          ],
+          "enumDescriptions": [
+            "Only show critical errors",
+            "Show warnings and errors",
+            "Show general information, warnings, and errors (default)",
+            "Show detailed debug information (recommended for troubleshooting)",
+            "Show very detailed trace information (step-by-step execution)"
+          ],
+          "description": "Set the logging level for the extension. Higher levels include all lower level messages.",
+          "order": 1,
+          "markdownDescription": "Control how much information the extension logs:\n- **error**: Only critical errors\n- **warn**: Warnings + errors\n- **info**: General info + warnings + errors (default)\n- **debug**: Detailed debug info (recommended for troubleshooting)\n- **trace**: Very detailed step-by-step execution"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package",
+    "install-local": "npm run package && cursor --install-extension $(ls -t yaml-key-replace-*.vsix | head -1)",
+    "build-and-install": "npm run compile && npm run install-local"
+  },
+  "devDependencies": {
+    "@types/node": "16.x",
+    "@types/vscode": "^1.93.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "eslint": "^8.39.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "yaml": "^2.3.4"
+  }
+}

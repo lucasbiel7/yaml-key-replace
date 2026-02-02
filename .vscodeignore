@@ -1,0 +1,36 @@
+# VS Code Extension Ignore File
+# Files and folders to exclude from the extension package
+
+# Source files (already compiled in /out)
+src/**
+tsconfig.json
+
+# Node modules
+node_modules/**
+
+# Build files
+*.vsix
+yaml-key-replace-*.vsix
+
+# Development files
+.vscode/**
+.vscode-test/**
+.git/**
+.gitignore
+
+# Package lock
+package-lock.json
+
+# Temporary files
+*.log
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Test files
+test/**
+out/test/**
+
+# Documentation
+.eslintrc.json

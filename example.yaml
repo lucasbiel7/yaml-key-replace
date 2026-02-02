@@ -1,0 +1,13 @@
+# Example YAML file for testing the extension
+# Try pasting these keys: server.port, database.host, app.name
+
+server:
+  host: localhost
+  port: 8080
+
+database:
+  host: db.example.com
+  port: 5432
+  credentials:
+    username: admin
+    password: secret
