@@ -174,6 +174,7 @@ export function findPartialKeyPath(
 ): PartialKeyPathResult {
   let current: unknown = doc.contents;
   let lastValidPair: Pair | null = null;
+  let lastValidMap: YAMLMap | null = null;
   let existingDepth = 0;
 
   // Navigate through the key segments to find how deep we can go
@@ -193,12 +194,22 @@ export function findPartialKeyPath(
 
     if (!pair) {
       // This segment doesn't exist, stop here
+      // But we found a valid map where we can insert
+      if (current instanceof YAMLMap) {
+        lastValidMap = current;
+      }
       break;
     }
 
     // This segment exists
     existingDepth = i + 1;
     lastValidPair = pair;
+
+    // Store the current map before moving to the next level
+    if (current instanceof YAMLMap) {
+      lastValidMap = current;
+    }
+
     current = pair.value;
   }
 
@@ -207,9 +218,11 @@ export function findPartialKeyPath(
 
   // If we found at least one existing segment, find where to insert
   let insertLocation: KeyLocation | null = null;
-  if (lastValidPair && lastValidPair.value instanceof YAMLMap) {
-    // Find the last item in the map to determine insert location
-    const items = lastValidPair.value.items;
+
+  // We want to insert at the level of lastValidMap (where the missing segment should go)
+  if (lastValidMap && remainingSegments.length > 0) {
+    // Find the last item in the map where we want to insert
+    const items = lastValidMap.items;
     if (items.length > 0) {
       const lastItem = items[items.length - 1];
       if (lastItem instanceof Pair && lastItem.key instanceof Scalar) {
@@ -223,8 +236,10 @@ export function findPartialKeyPath(
           };
         }
       }
-    } else if (lastValidPair.key instanceof Scalar) {
-      // Empty map, insert after the parent key
+    }
+  } else if (lastValidPair && lastValidPair.value instanceof YAMLMap && remainingSegments.length > 0) {
+    // Empty map case - insert after the parent key
+    if (lastValidPair.key instanceof Scalar) {
       const keyNode = lastValidPair.key as Scalar;
       if (keyNode.range) {
         const pos = lineCounter.linePos(keyNode.range[0]);

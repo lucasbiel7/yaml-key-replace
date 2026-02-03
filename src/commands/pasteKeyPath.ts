@@ -28,7 +28,7 @@ function getBaseIndent(editor: vscode.TextEditor): string {
   const position = editor.selection.active;
   const line = editor.document.lineAt(position.line);
   const lineText = line.text;
-  
+
   // Extract leading whitespace
   const match = lineText.match(/^(\s*)/);
   return match ? match[1] : '';
@@ -43,11 +43,11 @@ function generateYamlStructure(
   indentUnit: string
 ): string {
   const lines: string[] = [];
-  
+
   for (let i = 0; i < keySegments.length; i++) {
     const segment = keySegments[i];
     const currentIndent = baseIndent + indentUnit.repeat(i);
-    
+
     if (i === keySegments.length - 1) {
       // Last segment - just the key with colon (no value)
       lines.push(`${currentIndent}${segment}:`);
@@ -56,7 +56,7 @@ function generateYamlStructure(
       lines.push(`${currentIndent}${segment}:`);
     }
   }
-  
+
   return lines.join('\n');
 }
 
@@ -98,7 +98,7 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
         new vscode.Range(position, position),
         vscode.TextEditorRevealType.InCenter
       );
-      
+
       // Show message to user
       vscode.window.showInformationMessage(
         `Property "${normalizedText}" already exists. Navigated to it.`
@@ -108,7 +108,7 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
 
     // Check if there's a partial path that exists
     const partialResult = findPartialKeyPath(doc, lineCounter, keySegments);
-    
+
     if (partialResult.existingDepth > 0 && partialResult.insertLocation && partialResult.remainingSegments.length > 0) {
       // Partial path exists - insert only the remaining segments
       logger.info('Partial key path exists, inserting remaining segments', {
@@ -118,14 +118,14 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
 
       const indentUnit = getIndentUnit(editor);
       const insertLine = partialResult.insertLocation.line;
-      
-      // Get the indentation of the last existing key
+
+      // Get the indentation of the last existing key at the same level
       const lastKeyLine = editor.document.lineAt(insertLine);
       const lastKeyIndent = lastKeyLine.text.match(/^(\s*)/)?.[1] || '';
-      
-      // Calculate the base indent for new keys (one level deeper than the last key)
-      const baseIndent = lastKeyIndent + indentUnit;
-      
+
+      // Use the same indent as the last key (we want to insert at the same level)
+      const baseIndent = lastKeyIndent;
+
       // Generate YAML structure for remaining segments
       const yamlStructure = generateYamlStructure(
         partialResult.remainingSegments,
@@ -138,7 +138,7 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
       await editor.edit((editBuilder) => {
         editBuilder.insert(insertPosition, yamlStructure + '\n');
       });
-      
+
       logger.info('Remaining segments inserted successfully', {
         keyPath: normalizedText,
         insertedAt: { line: insertPosition.line, column: insertPosition.character }
@@ -151,7 +151,7 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
       const newColumn = lastLine.length;
       const newPosition = new vscode.Position(newLine, newColumn);
       editor.selection = new vscode.Selection(newPosition, newPosition);
-      
+
       return;
     }
 

@@ -6,6 +6,18 @@ All notable changes to the YAML Key Replace extension will be documented in this
 
 ---
 
+## [0.0.6] - 2026-02-03
+
+### Fixed
+- **Partial Path Insertion Level**: Fixed bug where pasting a key path with existing parent levels would insert at the wrong nesting level. For example, when `test.endpoint.get` exists and you paste `test.endpoint.put`, it now correctly inserts `put:` at the same level as `get`, not inside `get`.
+- **Indentation Calculation**: Fixed incorrect indentation when inserting partial paths. The extension now uses the same indentation level as sibling keys instead of adding an extra level.
+
+### Technical
+- Improved `findPartialKeyPath()` to correctly identify the target map level for insertion
+- Fixed indentation logic in `pasteKeyPath` to use sibling key indentation instead of adding extra levels
+
+---
+
 ## [0.0.5] - 2026-02-03
 
 ### Added
@@ -60,7 +72,8 @@ All notable changes to the YAML Key Replace extension will be documented in this
 
 ---
 
-[Unreleased]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.2...v0.0.3

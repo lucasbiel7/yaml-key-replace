@@ -1,19 +1,22 @@
 # Test file to demonstrate smart paste feature
 #
 # Smart Paste Examples:
-# 1. If you copy "test.endpoint.put" and paste below, it will add only "put:"
-#    at the correct indentation level (not recreate "test.endpoint.put")
-# 2. If you copy "test.database.connection" and paste, it will create the full structure
+# 1. Copy "test.endpoint.put" and paste anywhere - it will add only "put:"
+#    at the same level as "get" (not inside "get", not recreating the full structure)
+# 2. Copy "test.database.connection" and paste - it will create the full structure
 #    since "database" doesn't exist yet
-# 3. If you copy "test.endpoint.get" and paste, it will navigate to the existing property
+# 3. Copy "test.endpoint.get" and paste - it will navigate to the existing property
+# 4. Copy "test.endpoint.get.timeout" and paste - it will add "timeout:" inside "get"
 #
 # Smart Copy Example:
 # Place cursor on "get" below and press Ctrl+Shift+C (or Cmd+Shift+C on Mac)
 # It will copy "test.endpoint.get" to your clipboard
+
 test:
   endpoint:
     get:
       url: /api/test
       method: GET
-    # Try pasting "test.endpoint.put" here - it should add only "put:" at this level
-    # Try pasting "test.endpoint.delete" here - it should add only "delete:" at this level
+    # Try pasting "test.endpoint.put" - it should add "put:" at the same level as "get"
+    # Try pasting "test.endpoint.delete" - it should add "delete:" at the same level as "get"
+    # Try pasting "test.endpoint.get.timeout" - it should add "timeout:" inside "get"
