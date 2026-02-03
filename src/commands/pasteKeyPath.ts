@@ -119,12 +119,21 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
       const indentUnit = getIndentUnit(editor);
       const insertLine = partialResult.insertLocation.line;
 
-      // Get the indentation of the last existing key at the same level
-      const lastKeyLine = editor.document.lineAt(insertLine);
-      const lastKeyIndent = lastKeyLine.text.match(/^(\s*)/)?.[1] || '';
+      // Validate that insertLine is within document bounds
+      const lastLineNumber = editor.document.lineCount - 1;
+      const safeInsertLine = Math.min(insertLine, lastLineNumber);
 
-      // Use the same indent as the last key (we want to insert at the same level)
-      const baseIndent = lastKeyIndent;
+      // Get the indentation from the sibling key location (not the last line of subtree)
+      let baseIndent = '';
+      if (partialResult.siblingKeyLocation) {
+        const siblingLine = Math.min(partialResult.siblingKeyLocation.line, lastLineNumber);
+        const siblingKeyLine = editor.document.lineAt(siblingLine);
+        baseIndent = siblingKeyLine.text.match(/^(\s*)/)?.[1] || '';
+      } else {
+        // Fallback: use the indentation from the insert line
+        const lastKeyLine = editor.document.lineAt(safeInsertLine);
+        baseIndent = lastKeyLine.text.match(/^(\s*)/)?.[1] || '';
+      }
 
       // Generate YAML structure for remaining segments
       const yamlStructure = generateYamlStructure(
@@ -134,9 +143,13 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
       );
 
       // Insert after the last key in the existing structure
-      const insertPosition = new vscode.Position(insertLine + 1, 0);
+      // If insertLine is the last line of the document, we need to add a newline before
+      const insertPosition = new vscode.Position(safeInsertLine + 1, 0);
+      const isLastLine = safeInsertLine === lastLineNumber;
+      const textToInsert = isLastLine ? '\n' + yamlStructure : yamlStructure + '\n';
+
       await editor.edit((editBuilder) => {
-        editBuilder.insert(insertPosition, yamlStructure + '\n');
+        editBuilder.insert(insertPosition, textToInsert);
       });
 
       logger.info('Remaining segments inserted successfully', {

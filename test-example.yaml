@@ -3,10 +3,12 @@
 # Smart Paste Examples:
 # 1. Copy "test.endpoint.put" and paste anywhere - it will add only "put:"
 #    at the same level as "get" (not inside "get", not recreating the full structure)
-# 2. Copy "test.database.connection" and paste - it will create the full structure
+# 2. Copy "listing.availability.testing.url" when "listing.availability.release.url" exists
+#    - it will add "testing:" AFTER all of release's children, not in the middle
+# 3. Copy "test.database.connection" and paste - it will create the full structure
 #    since "database" doesn't exist yet
-# 3. Copy "test.endpoint.get" and paste - it will navigate to the existing property
-# 4. Copy "test.endpoint.get.timeout" and paste - it will add "timeout:" inside "get"
+# 4. Copy "test.endpoint.get" and paste - it will navigate to the existing property
+# 5. Copy "test.endpoint.get.timeout" and paste - it will add "timeout:" inside "get"
 #
 # Smart Copy Example:
 # Place cursor on "get" below and press Ctrl+Shift+C (or Cmd+Shift+C on Mac)
@@ -20,3 +22,11 @@ test:
     # Try pasting "test.endpoint.put" - it should add "put:" at the same level as "get"
     # Try pasting "test.endpoint.delete" - it should add "delete:" at the same level as "get"
     # Try pasting "test.endpoint.get.timeout" - it should add "timeout:" inside "get"
+
+listing:
+  availability:
+    release:
+      url: /api/release
+      version: 1.0
+    # Try pasting "listing.availability.testing.url" - it should add "testing:" here
+    # AFTER all of release's children (url and version), not between them
