@@ -20,6 +20,7 @@ A VS Code extension that provides IntelliJ-like behavior for pasting and copying
 - **Intelligent partial path insertion**: If parent levels already exist (e.g., you have `test.endpoint.get` and paste `test.endpoint.put`), only the missing segment (`put:`) is inserted at the correct indentation level, keeping your YAML clean and organized
 - **Auto-indentation**: Uses your editor's configured indentation (spaces or tabs)
 - **Navigate to existing**: If the property already exists, the cursor jumps to it instead of duplicating
+- **Automatic viewport centering**: After pasting, the screen automatically scrolls to center the inserted text, making it easy to verify the operation worked correctly
 - **Fallback to normal paste**: If the clipboard doesn't contain a valid key path, normal paste behavior is used
 
 ### Smart Copy

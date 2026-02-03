@@ -61,6 +61,17 @@ function generateYamlStructure(
 }
 
 /**
+ * Move cursor to a position and reveal it in the center of the viewport
+ */
+function moveCursorAndReveal(editor: vscode.TextEditor, position: vscode.Position): void {
+  editor.selection = new vscode.Selection(position, position);
+  editor.revealRange(
+    new vscode.Range(position, position),
+    vscode.TextEditorRevealType.InCenter
+  );
+}
+
+/**
  * Main paste command handler
  */
 export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
@@ -93,11 +104,7 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
       // Key exists - navigate to it
       logger.info('Key path already exists, navigating to it', { keyPath: normalizedText, line: existingLocation.line });
       const position = new vscode.Position(existingLocation.line, existingLocation.column);
-      editor.selection = new vscode.Selection(position, position);
-      editor.revealRange(
-        new vscode.Range(position, position),
-        vscode.TextEditorRevealType.InCenter
-      );
+      moveCursorAndReveal(editor, position);
 
       // Show message to user
       vscode.window.showInformationMessage(
@@ -163,7 +170,7 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
       const lastLine = lines[lines.length - 1];
       const newColumn = lastLine.length;
       const newPosition = new vscode.Position(newLine, newColumn);
-      editor.selection = new vscode.Selection(newPosition, newPosition);
+      moveCursorAndReveal(editor, newPosition);
 
       return;
     }
@@ -188,8 +195,7 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
     const lastLine = lines[lines.length - 1];
     const newColumn = lastLine.length;
     const newPosition = new vscode.Position(newLine, newColumn);
-    editor.selection = new vscode.Selection(newPosition, newPosition);
-
+    moveCursorAndReveal(editor, newPosition);
   } catch (error) {
     logger.error('Error in pasteKeyPath:', error);
     // Fallback to default paste on error

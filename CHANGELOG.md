@@ -6,6 +6,18 @@ All notable changes to the YAML Key Replace extension will be documented in this
 
 ---
 
+## [0.0.8] - 2026-02-03
+
+### Added
+- **Cursor Navigation**: Added automatic viewport centering when pasting YAML keys. The screen now scrolls to show the inserted text, making it easier to verify that paste operations worked correctly.
+
+### Technical
+- **Code Refactoring**: Extracted cursor navigation logic into a reusable `moveCursorAndReveal()` helper function
+- **Maintainability**: Reduced code duplication by centralizing cursor positioning and viewport reveal logic
+- **Consistency**: Ensured all paste operations use the same cursor navigation behavior
+
+---
+
 ## [0.0.6] - 2026-02-03
 
 ### Fixed
