@@ -2,7 +2,7 @@
   "name": "yaml-key-replace",
   "displayName": "YAML Key Replace",
   "description": "Smart paste/copy for YAML properties - expand dotted keys to YAML structure",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "lucasbiel7",
   "author": {
     "name": "lucasbiel7"
@@ -60,8 +60,8 @@
       },
       {
         "command": "yamlKeyReplace.copyKeyPath",
-        "key": "ctrl+c",
-        "mac": "cmd+c",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
         "when": "editorTextFocus && editorLangId == yaml"
       }
     ],

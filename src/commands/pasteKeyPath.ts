@@ -3,7 +3,7 @@
  */
 import * as vscode from 'vscode';
 import { isValidKeyPath, splitKeyPath, normalizeKeyPath } from '../yaml/keyPath';
-import { parseYamlDocument, findKeyPath } from '../yaml/yamlAst';
+import { parseYamlDocument, findKeyPath, findPartialKeyPath } from '../yaml/yamlAst';
 import { logger } from '../logger';
 
 /**
@@ -106,7 +106,56 @@ export async function pasteKeyPath(editor: vscode.TextEditor): Promise<void> {
       return;
     }
 
-    // Key doesn't exist - insert it
+    // Check if there's a partial path that exists
+    const partialResult = findPartialKeyPath(doc, lineCounter, keySegments);
+    
+    if (partialResult.existingDepth > 0 && partialResult.insertLocation && partialResult.remainingSegments.length > 0) {
+      // Partial path exists - insert only the remaining segments
+      logger.info('Partial key path exists, inserting remaining segments', {
+        existingDepth: partialResult.existingDepth,
+        remainingSegments: partialResult.remainingSegments
+      });
+
+      const indentUnit = getIndentUnit(editor);
+      const insertLine = partialResult.insertLocation.line;
+      
+      // Get the indentation of the last existing key
+      const lastKeyLine = editor.document.lineAt(insertLine);
+      const lastKeyIndent = lastKeyLine.text.match(/^(\s*)/)?.[1] || '';
+      
+      // Calculate the base indent for new keys (one level deeper than the last key)
+      const baseIndent = lastKeyIndent + indentUnit;
+      
+      // Generate YAML structure for remaining segments
+      const yamlStructure = generateYamlStructure(
+        partialResult.remainingSegments,
+        baseIndent,
+        indentUnit
+      );
+
+      // Insert after the last key in the existing structure
+      const insertPosition = new vscode.Position(insertLine + 1, 0);
+      await editor.edit((editBuilder) => {
+        editBuilder.insert(insertPosition, yamlStructure + '\n');
+      });
+      
+      logger.info('Remaining segments inserted successfully', {
+        keyPath: normalizedText,
+        insertedAt: { line: insertPosition.line, column: insertPosition.character }
+      });
+
+      // Move cursor to the end of the inserted text
+      const lines = yamlStructure.split('\n');
+      const newLine = insertPosition.line + lines.length - 1;
+      const lastLine = lines[lines.length - 1];
+      const newColumn = lastLine.length;
+      const newPosition = new vscode.Position(newLine, newColumn);
+      editor.selection = new vscode.Selection(newPosition, newPosition);
+      
+      return;
+    }
+
+    // Key doesn't exist at all - insert full structure
     logger.debug('Key path does not exist, expanding to YAML structure');
     const baseIndent = getBaseIndent(editor);
     const indentUnit = getIndentUnit(editor);

@@ -17,6 +17,7 @@ A VS Code extension that provides IntelliJ-like behavior for pasting and copying
     api:
       endpoint:
   ```
+- **Intelligent partial path insertion**: If parent levels already exist (e.g., you have `test.endpoint.get` and paste `test.endpoint.put`), only the missing segment (`put:`) is inserted at the correct indentation level, keeping your YAML clean and organized
 - **Auto-indentation**: Uses your editor's configured indentation (spaces or tabs)
 - **Navigate to existing**: If the property already exists, the cursor jumps to it instead of duplicating
 - **Fallback to normal paste**: If the clipboard doesn't contain a valid key path, normal paste behavior is used
@@ -24,6 +25,7 @@ A VS Code extension that provides IntelliJ-like behavior for pasting and copying
 ### Smart Copy
 - **Copy as flattened path**: When you copy a YAML property (with cursor on the key), it copies the flattened path like `listing.api.endpoint`
 - **Smart detection**: Only converts to key path when copying the property itself, not just the value
+- **Dedicated keybinding**: Uses `Ctrl+Shift+C` (Windows/Linux) or `Cmd+Shift+C` (Mac) to avoid interfering with normal copy operations
 - **Fallback to normal copy**: If not copying a property, normal copy behavior is used
 
 ## Usage
@@ -49,7 +51,7 @@ A VS Code extension that provides IntelliJ-like behavior for pasting and copying
 
 1. Open a YAML file
 2. Place your cursor on a property key (or select it)
-3. Press `Cmd+C` (Mac) or `Ctrl+C` (Windows/Linux)
+3. Press `Cmd+Shift+C` (Mac) or `Ctrl+Shift+C` (Windows/Linux)
 4. The flattened key path is copied to your clipboard (e.g., `server.port`)
 
 **Example:**
@@ -58,6 +60,8 @@ server:
   port: 8080  # Cursor here, copy gives you "server.port"
   host: localhost
 ```
+
+**Note:** Regular `Cmd+C` / `Ctrl+C` works normally for copying text. Use `Cmd+Shift+C` / `Ctrl+Shift+C` specifically for copying YAML key paths.
 
 ## Requirements
 
@@ -87,9 +91,9 @@ Or install directly from [Open VSX Registry](https://open-vsx.org/extension/luca
 ### From VSIX File
 Download the `.vsix` file from [Releases](https://github.com/lucasbiel7/yaml-key-replace/releases) and install via:
 ```bash
-code --install-extension yaml-key-replace-0.0.4.vsix
+code --install-extension yaml-key-replace-0.0.5.vsix
 # or
-cursor --install-extension yaml-key-replace-0.0.4.vsix
+cursor --install-extension yaml-key-replace-0.0.5.vsix
 ```
 
 ### From Source (Development)
@@ -113,9 +117,9 @@ npm run compile
 npm run package
 
 # Install in Cursor/VS Code
-cursor --install-extension yaml-key-replace-0.0.4.vsix
+cursor --install-extension yaml-key-replace-0.0.5.vsix
 # or
-code --install-extension yaml-key-replace-0.0.4.vsix
+code --install-extension yaml-key-replace-0.0.5.vsix
 ```
 
 ## How It Works
@@ -190,14 +194,17 @@ The extension automatically:
 
 ## Keybindings
 
-The extension overrides the default copy/paste behavior **only in YAML files**:
+The extension provides smart copy/paste behavior **only in YAML files**:
 
 | Command | Mac | Windows/Linux | When |
 |---------|-----|---------------|------|
 | Paste Key Path | `Cmd+V` | `Ctrl+V` | In YAML files |
-| Copy Key Path | `Cmd+C` | `Ctrl+C` | In YAML files |
+| Copy Key Path | `Cmd+Shift+C` | `Ctrl+Shift+C` | In YAML files |
 
-In other file types, normal copy/paste behavior is preserved.
+**Notes:**
+- Paste (`Cmd+V` / `Ctrl+V`) is overridden in YAML files to provide smart expansion
+- Copy uses `Cmd+Shift+C` / `Ctrl+Shift+C` to avoid interfering with normal copy operations
+- In other file types, normal copy/paste behavior is preserved
 
 ## Development
 

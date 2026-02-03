@@ -6,6 +6,21 @@ All notable changes to the YAML Key Replace extension will be documented in this
 
 ---
 
+## [0.0.5] - 2026-02-03
+
+### Added
+- **Smart Paste with Partial Path Detection**: When pasting a key path where some parent levels already exist (e.g., pasting `test.endpoint.put` when `test.endpoint.get` exists), the extension now intelligently inserts only the missing segments (`put:`) at the correct indentation level, instead of recreating the entire structure. This keeps your YAML files clean and avoids unnecessary duplication.
+
+### Changed
+- **Copy Keybinding**: Changed from `Ctrl+C` / `Cmd+C` to `Ctrl+Shift+C` / `Cmd+Shift+C` to avoid overriding the default copy behavior. This allows normal text copying to work as expected while still providing the smart YAML key path copy feature when needed.
+
+### Technical
+- Added `findPartialKeyPath()` function to detect existing path segments in YAML structure
+- Enhanced paste logic to calculate correct indentation for partial path insertions
+- Improved type safety with null checks for YAML node ranges
+
+---
+
 ## [0.0.4] - 2026-02-02
 
 ### Fixed
@@ -45,7 +60,8 @@ All notable changes to the YAML Key Replace extension will be documented in this
 
 ---
 
-[Unreleased]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/lucasbiel7/yaml-key-replace/compare/v0.0.2...v0.0.3
 [0.0.1]: https://github.com/lucasbiel7/yaml-key-replace/releases/tag/v0.0.1

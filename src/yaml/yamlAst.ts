@@ -10,6 +10,12 @@ export interface KeyLocation {
   keyNode: Scalar;
 }
 
+export interface PartialKeyPathResult {
+  existingDepth: number; // How many segments already exist
+  insertLocation: KeyLocation | null; // Where to insert the remaining segments
+  remainingSegments: string[]; // Segments that need to be inserted
+}
+
 /**
  * Parse a YAML document with line tracking
  */
@@ -80,10 +86,10 @@ export function getKeyPathAtPosition(
   position: vscode.Position
 ): string[] | null {
   const offset = lineCounter.lineStarts[position.line] + position.character;
-  
+
   // Find the node at this position
   const path: string[] = [];
-  
+
   function visit(node: unknown, currentPath: string[]): boolean {
     if (node instanceof YAMLMap) {
       for (const item of node.items) {
@@ -91,13 +97,13 @@ export function getKeyPathAtPosition(
           const keyNode = item.key;
           if (keyNode instanceof Scalar && keyNode.range) {
             const [start, end] = keyNode.range;
-            
+
             // Check if position is within the key range
             if (offset >= start && offset <= end) {
               path.push(...currentPath, String(keyNode.value));
               return true;
             }
-            
+
             // Check the value recursively
             if (item.value) {
               const newPath = [...currentPath, String(keyNode.value)];
@@ -111,11 +117,11 @@ export function getKeyPathAtPosition(
     }
     return false;
   }
-  
+
   if (doc.contents) {
     visit(doc.contents, []);
   }
-  
+
   return path.length > 0 ? path : null;
 }
 
@@ -128,7 +134,7 @@ export function isPositionOnKey(
   position: vscode.Position
 ): boolean {
   const offset = lineCounter.lineStarts[position.line] + position.character;
-  
+
   function checkNode(node: unknown): boolean {
     if (node instanceof YAMLMap) {
       for (const item of node.items) {
@@ -140,7 +146,7 @@ export function isPositionOnKey(
               return true;
             }
           }
-          
+
           // Check nested values
           if (item.value && checkNode(item.value)) {
             return true;
@@ -150,6 +156,90 @@ export function isPositionOnKey(
     }
     return false;
   }
-  
+
   return doc.contents ? checkNode(doc.contents) : false;
+}
+
+/**
+ * Find the deepest existing partial path for a key path
+ * Returns information about which segments exist and where to insert the rest
+ *
+ * Example: If YAML has "test.endpoint.get" and we want to paste "test.endpoint.put"
+ * This will return that "test.endpoint" exists (depth 2) and where to insert "put"
+ */
+export function findPartialKeyPath(
+  doc: Document,
+  lineCounter: LineCounter,
+  keySegments: string[]
+): PartialKeyPathResult {
+  let current: unknown = doc.contents;
+  let lastValidPair: Pair | null = null;
+  let existingDepth = 0;
+
+  // Navigate through the key segments to find how deep we can go
+  for (let i = 0; i < keySegments.length; i++) {
+    const segment = keySegments[i];
+
+    if (!current || !(current instanceof YAMLMap)) {
+      break;
+    }
+
+    const pair = current.items.find((item: Pair) => {
+      if (item.key instanceof Scalar) {
+        return item.key.value === segment;
+      }
+      return false;
+    });
+
+    if (!pair) {
+      // This segment doesn't exist, stop here
+      break;
+    }
+
+    // This segment exists
+    existingDepth = i + 1;
+    lastValidPair = pair;
+    current = pair.value;
+  }
+
+  // Calculate remaining segments
+  const remainingSegments = keySegments.slice(existingDepth);
+
+  // If we found at least one existing segment, find where to insert
+  let insertLocation: KeyLocation | null = null;
+  if (lastValidPair && lastValidPair.value instanceof YAMLMap) {
+    // Find the last item in the map to determine insert location
+    const items = lastValidPair.value.items;
+    if (items.length > 0) {
+      const lastItem = items[items.length - 1];
+      if (lastItem instanceof Pair && lastItem.key instanceof Scalar) {
+        const keyNode = lastItem.key as Scalar;
+        if (keyNode.range) {
+          const pos = lineCounter.linePos(keyNode.range[0]);
+          insertLocation = {
+            line: pos.line - 1,
+            column: pos.col - 1,
+            keyNode
+          };
+        }
+      }
+    } else if (lastValidPair.key instanceof Scalar) {
+      // Empty map, insert after the parent key
+      const keyNode = lastValidPair.key as Scalar;
+      if (keyNode.range) {
+        const pos = lineCounter.linePos(keyNode.range[0]);
+        insertLocation = {
+          line: pos.line - 1,
+          column: pos.col - 1,
+          keyNode
+        };
+      }
+    }
+  }
+
+  return {
+    existingDepth,
+    insertLocation,
+    remainingSegments
+  };
 }
